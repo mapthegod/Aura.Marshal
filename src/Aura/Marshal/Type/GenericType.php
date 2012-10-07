@@ -703,4 +703,10 @@ class GenericType extends Data
         }
         return $list;
     }
+    
+    public function getRelated($record, $relation_name)
+    {
+        $relation = $this->getRelation($relation_name);
+        return $relation->getForRecord($record);
+    }
 }

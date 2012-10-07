@@ -133,9 +133,7 @@ class GenericRecord extends Data
                       && in_array($field, $this->type->getRelationNames());
 
         if ($fill_related) {
-            $relation = $this->type->getRelation($field);
-            $value    = $relation->getForRecord($this);
-            $this->offsetSet($field, $value);
+            $this->offsetSet($field, $this->type->getRelated($this, $field));
         }
 
         return parent::offsetGet($field);

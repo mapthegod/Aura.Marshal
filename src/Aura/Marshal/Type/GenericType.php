@@ -15,6 +15,7 @@ use Aura\Marshal\Data;
 use Aura\Marshal\Exception;
 use Aura\Marshal\Record\BuilderInterface as RecordBuilderInterface;
 use Aura\Marshal\Relation\RelationInterface;
+use SplObjectStorage;
 
 /**
  * 
@@ -86,6 +87,8 @@ class GenericType extends Data
      */
     protected $index_fields = [];
 
+    protected $initial_data;
+    
     /**
      * 
      * A builder to create record objects for this type.
@@ -114,6 +117,19 @@ class GenericType extends Data
      * 
      */
     protected $relation = [];
+
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param array $data The data for this object.
+     * 
+     */
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+        $this->initial_data = new SplObjectStorage;
+    }
 
     /**
      * 
@@ -289,17 +305,11 @@ class GenericType extends Data
         // return a list of field values in $data
         $return_values = [];
 
-        // what is the identity field for the type?
-        $identity_field  = $this->getIdentityField();
-
         // what should the return field be?
         if (! $return_field) {
-            $return_field = $identity_field;
+            $return_field = $this->getIdentityField();
         }
         
-        // what's the last data offset?
-        $offset = count($this->data);
-
         // load each data element as a record
         foreach ($data as $record) {
 
@@ -310,33 +320,54 @@ class GenericType extends Data
             $return_value    = $record->$return_field;
             $return_values[] = $return_value;
 
-            // retain the identity value on the record
-            $identity_value = $record->$identity_field;
-
-            // does the identity already exist in the map?
-            if (isset($this->index_identity[$identity_value])) {
-                // yes, skip it and go on
-                continue;
-            }
-
-            // no, retain it in the identity map and identity index ...
-            $this->data[$offset] = $record;
-            $this->index_identity[$identity_value] = $offset;
-
-            // ... put the offset value into the indexes ...
-            foreach ($index_fields as $field) {
-                $value = $record->$field;
-                $this->index_fields[$field][$value][] = $offset;
-            }
-
-            // ... and increment the offset for the next record.
-            $offset ++;
+            // load it
+            $this->loadEntity($record, $index_fields);
         }
 
         // return the list of field values in $data, and done
         return $return_values;
     }
 
+    protected function loadEntity($initial_data, $index_fields)
+    {
+        // get the identity value
+        $identity_field  = $this->getIdentityField();
+        $identity_value  = $initial_data->$identity_field;
+        
+        // if it exists, don't re-load it
+        if (isset($this->index_identity[$identity_value])) {
+            $offset = $this->index_identity[$identity_value];
+            return $this->offsetGet($offset);
+        }
+        
+        // convert to a record of the proper type
+        $record = $this->record_builder->newInstance(
+            $this,
+            $this->record_class,
+            $initial_data
+        );
+
+        // retain it in the identity map
+        $this->data[] = $record;
+        
+        // index identity by offset
+        end($this->data);
+        $offset = key($this->data);
+        $this->index_identity[$identity_value] = $offset;
+        
+        // index other fields by offset
+        foreach ($index_fields as $field) {
+            $value = $record->$field;
+            $this->index_fields[$field][$value][] = $offset;
+        }
+        
+        // retain initial data
+        $this->initial_data->attach($record, $initial_data);
+        
+        // done! return the loaded record
+        return $record;
+    }
+    
     /**
      * 
      * Returns the array keys for the for the records in the IdentityMap;
@@ -392,7 +423,7 @@ class GenericType extends Data
 
         // look up the sequential offset for the identity value
         $offset = $this->index_identity[$identity_value];
-        return $this->getRecordByOffset($offset);
+        return $this->offsetGet($offset);
     }
 
     /**
@@ -426,38 +457,12 @@ class GenericType extends Data
         // long slow loop through all the records to find a match.
         foreach ($this->data as $offset => $record) {
             if ($record->$field == $value) {
-                return $this->getRecordByOffset($offset);
+                return $this->offsetGet($offset);
             }
         }
 
         // no match!
         return null;
-    }
-
-    /**
-     * 
-     * Retrieves a single record from the IdentityMap by its offset,
-     * converting it to a $record_class object if needed.
-     * 
-     * @param int $offset The record offset in the $data array.
-     * 
-     * @return object A record object via the record builder.
-     * 
-     */
-    protected function getRecordByOffset($offset)
-    {
-        // if it is already a record of the proper type, exit early
-        if ($this->data[$offset] instanceof $this->record_class) {
-            return $this->data[$offset];
-        }
-
-        // convert to a record of the proper type ...
-        $data = $this->data[$offset];
-        $record = $this->record_builder->newInstance($this, $this->record_class, $data);
-
-        // ... then retain and return it.
-        $this->data[$offset] = $record;
-        return $this->data[$offset];
     }
 
     /**
@@ -478,7 +483,7 @@ class GenericType extends Data
             return null;
         }
         $offset = $this->index_fields[$field][$value][0];
-        return $this->getRecordByOffset($offset);
+        return $this->offsetGet($offset);
     }
 
     /**
@@ -708,5 +713,70 @@ class GenericType extends Data
     {
         $relation = $this->getRelation($relation_name);
         return $relation->getForRecord($record);
+    }
+    
+    public function getInitialData($record)
+    {
+        if ($this->initial_data->contains($record)) {
+            return $this->initial_data[$record];
+        } else {
+            return null;
+        }
+    }
+    
+    public function getChangedFields($record)
+    {
+        // the eventual list of changed fields and values
+        $changed = [];
+
+        // the list of relations
+        $related = $this->getRelationNames();
+
+        // initial data for this record
+        $initial_data = $this->getInitialData($record);
+        if (! $initial_data) {
+            foreach ($record as $field => $value) {
+                $changed[$field] = $value;
+            }
+            return $changed;
+        }
+        
+        // go through all the data elements and their presumed new values
+        foreach ($record as $field => $new) {
+
+            // if the field is a related record or collection, skip it.
+            // technically, we should ask it if it has changed at all.
+            if (in_array($field, $related)) {
+                continue;
+            }
+
+            // if the field is not part of the initial data ...
+            if (! array_key_exists($field, $initial_data)) {
+                // ... then it's a change from the initial data.
+                $changed[$field] = $new;
+                continue;
+            }
+
+            // what was the old (initial) value?
+            $old = $initial_data->$field;
+
+            // are both old and new values numeric?
+            $numeric = is_numeric($old) && is_numeric($new);
+
+            // if both old and new are numeric, compare loosely.
+            if ($numeric && $old != $new) {
+                // loosely different, retain the new value
+                $changed[$field] = $new;
+            }
+
+            // if one or the other is not numeric, compare strictly
+            if (! $numeric && $old !== $new) {
+                // strictly different, retain the new value
+                $changed[$field] = $new;
+            }
+        }
+
+        // done!
+        return $changed;
     }
 }

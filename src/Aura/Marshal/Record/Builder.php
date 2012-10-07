@@ -32,7 +32,7 @@ class Builder implements BuilderInterface
      * @return GenericRecord
      * 
      */
-    public function newInstance(GenericType $type, $data)
+    public function newInstance(GenericType $type, $class, $data)
     {
         return new GenericRecord((array) $data, $type);
     }

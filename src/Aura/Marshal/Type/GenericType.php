@@ -453,7 +453,7 @@ class GenericType extends Data
 
         // convert to a record of the proper type ...
         $data = $this->data[$offset];
-        $record = $this->record_builder->newInstance($this, $data);
+        $record = $this->record_builder->newInstance($this, $this->record_class, $data);
 
         // ... then retain and return it.
         $this->data[$offset] = $record;
@@ -658,7 +658,7 @@ class GenericType extends Data
      */
     public function newRecord(array $data = [])
     {
-        $record = $this->record_builder->newInstance($this, $data);
+        $record = $this->record_builder->newInstance($this, $this->record_class, $data);
         $this->index_new[] = count($this->data);
         $this->data[] = $record;
         return $record;

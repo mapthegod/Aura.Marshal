@@ -86,6 +86,14 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($builder, $actual);
     }
     
+    public function testSetAndGetRecordClass()
+    {
+        $class = 'FooBar';
+        $this->type->setRecordClass($class);
+        $actual = $this->type->getRecordClass();
+        $this->assertSame($class, $actual);
+    }
+    
     public function testLoadAndGetStorage()
     {
         $data = $this->loadTypeWithPosts();
@@ -354,6 +362,70 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             $this->type->newRecord(['fake_field' => 105]),
         ];
         $actual = $this->type->getNewRecords();
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_newField()
+    {
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        $record->newfield = 'something';
+        $expect = ['newfield' => 'something'];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_numeric()
+    {
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        
+        // change from string '69' to int 69;
+        // it should not be marked as a change
+        $record->fake_field = 69;
+        $expect = [];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+        
+        // change it from 69 to 88
+        $record->fake_field = 88;
+        $expect = ['fake_field' => 88];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+        
+        // add a new blank string field to test for zero
+        $record->zero = '';
+        $expect = ['fake_field' => 88, 'zero' => ''];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_toNull()
+    {
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        $record->zero = null;
+        $record->falsy = null;
+        $expect = ['zero' => null, 'falsy' => null];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedFields_fromNull()
+    {
+        $this->loadTypeWithPosts();
+        $record = $this->type->getRecord(1);
+        $record->null_field = 0;
+        $expect = ['null_field' => 0];
+        $actual = $this->type->getChangedFields($record);
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetChangedField_noInitialData()
+    {
+        $record = $this->type->newRecord(['foo' => 'bar', 'baz' => 'dib']);
+        $expect = ['foo' => 'bar', 'baz' => 'dib'];
+        $actual = $this->type->getChangedFields($record);
         $this->assertSame($expect, $actual);
     }
 }

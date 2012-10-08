@@ -681,11 +681,8 @@ class GenericType extends Data
     {
         $list = [];
         foreach ($this->index_identity as $identity_value => $offset) {
-            $record = $this->data[$offset];
-            if (! $record instanceof $this->record_class) {
-                continue;
-            }
-            if ($record->getChangedFields()) {
+            $record = $this->offsetGet($offset);
+            if ($this->getChangedFields($record)) {
                 $list[$identity_value] = $record;
             }
         }
@@ -729,9 +726,6 @@ class GenericType extends Data
         // the eventual list of changed fields and values
         $changed = [];
 
-        // the list of relations
-        $related = $this->getRelationNames();
-
         // initial data for this record
         $initial_data = $this->getInitialData($record);
         if (! $initial_data) {
@@ -743,12 +737,6 @@ class GenericType extends Data
         
         // go through all the data elements and their presumed new values
         foreach ($record as $field => $new) {
-
-            // if the field is a related record or collection, skip it.
-            // technically, we should ask it if it has changed at all.
-            if (in_array($field, $related)) {
-                continue;
-            }
 
             // if the field is not part of the initial data ...
             if (! array_key_exists($field, $initial_data)) {

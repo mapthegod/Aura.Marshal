@@ -7,7 +7,7 @@ require __DIR__ . '/src/Aura/Marshal/Collection/GenericCollection.php';
 require __DIR__ . '/src/Aura/Marshal/Exception.php';
 require __DIR__ . '/src/Aura/Marshal/Manager.php';
 require __DIR__ . '/src/Aura/Marshal/Record/BuilderInterface.php';
-require __DIR__ . '/src/Aura/Marshal/Record/Builder.php';
+require __DIR__ . '/src/Aura/Marshal/Record/ConstructorBuilder.php';
 require __DIR__ . '/src/Aura/Marshal/Record/GenericRecord.php';
 require __DIR__ . '/src/Aura/Marshal/Relation/RelationInterface.php';
 require __DIR__ . '/src/Aura/Marshal/Relation/AbstractRelation.php';

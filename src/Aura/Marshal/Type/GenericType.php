@@ -106,7 +106,7 @@ class GenericType extends Data
      * @var string
      * 
      */
-    protected $record_class;
+    protected $record_class = 'Aura\Marshal\Record\GenericRecord';
 
     /**
      * 
@@ -341,11 +341,7 @@ class GenericType extends Data
         }
         
         // convert to a record of the proper type
-        $record = $this->record_builder->newInstance(
-            $this,
-            $this->record_class,
-            $initial_data
-        );
+        $record = $this->record_builder->newInstance($this->record_class, $initial_data);
 
         // retain it in the identity map
         $this->data[] = $record;
@@ -661,9 +657,9 @@ class GenericType extends Data
      * @return object
      * 
      */
-    public function newRecord(array $data = [])
+    public function newRecord(array $initial_data = [])
     {
-        $record = $this->record_builder->newInstance($this, $this->record_class, $data);
+        $record = $this->record_builder->newInstance($this->record_class, $initial_data);
         $this->index_new[] = count($this->data);
         $this->data[] = $record;
         return $record;

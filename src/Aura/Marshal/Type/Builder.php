@@ -12,7 +12,7 @@ namespace Aura\Marshal\Type;
 
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 use Aura\Marshal\Exception;
-use Aura\Marshal\Record\Builder as RecordBuilder;
+use Aura\Marshal\Record\ConstructorBuilder as RecordBuilder;
 
 /**
  * 
@@ -38,7 +38,7 @@ class Builder
      * 
      * - `record_builder` (Record\BuilderInterface): A builder to create
      *   record objects for the type. This key is optional, and defaults to a
-     *   new Record\Builder object.
+     *   new Record\ConstructorBuilder object.
      * 
      * - `collection_builder` (Collection\BuilderInterface): A 
      *   A builder to create collection objects for the type. This key
@@ -54,7 +54,7 @@ class Builder
         $base = [
             'identity_field'        => null,
             'index_fields'          => [],
-            'record_class'          => 'Aura\Marshal\Record\GenericRecord',
+            'record_class'          => null,
             'record_builder'        => null,
             'collection_builder'    => null,
         ];
@@ -63,6 +63,10 @@ class Builder
 
         if (! $info['identity_field']) {
             throw new Exception('No identity field specified.');
+        }
+
+        if (! $info['record_class']) {
+            $info['record_class'] = 'Aura\Marshal\Record\GenericRecord';
         }
 
         if (! $info['record_builder']) {

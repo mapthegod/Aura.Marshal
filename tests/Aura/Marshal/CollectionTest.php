@@ -2,7 +2,7 @@
 namespace Aura\Marshal;
 use Aura\Marshal\Collection\GenericCollection;
 use Aura\Marshal\Type\GenericType;
-use Aura\Marshal\Record\Builder as RecordBuilder;
+use Aura\Marshal\Record\ConstructorBuilder as RecordBuilder;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 
 /**

@@ -426,7 +426,7 @@ $manager->setType('posts', [
     'identity_field' => 'id',
     
     // an object to build records; default is a new instance of
-    // Aura\Marshal\Record\Builder
+    // Aura\Marshal\Record\ConstructorBuilder
     'record_builder' => new \Vendor\Package\Posts\RecordBuilder,
     
     // the kind of objects expected from the builder; default is

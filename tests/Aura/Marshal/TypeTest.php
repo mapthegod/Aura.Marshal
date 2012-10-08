@@ -1,7 +1,7 @@
 <?php
 namespace Aura\Marshal;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
-use Aura\Marshal\Record\Builder as RecordBuilder;
+use Aura\Marshal\Record\ConstructorBuilder as RecordBuilder;
 use Aura\Marshal\Record\GenericCollection;
 use Aura\Marshal\Record\GenericRecord;
 use Aura\Marshal\Relation\Builder as RelationBuilder;

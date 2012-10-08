@@ -41,7 +41,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     protected function loadTypeWithPosts()
     {
         $data = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
-        $this->type->load($data['posts']);
+        $this->type->loadCollection($data['posts']);
         return $data['posts'];
     }
     

@@ -81,7 +81,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
             ];
         }
         
-        $type->load($data);
+        $type->loadCollection($data);
         
         // get a collection of all the IDs from the type *before* creating
         // any record objects.

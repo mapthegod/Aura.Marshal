@@ -293,42 +293,37 @@ class GenericType extends Data
      * @param string $return_field Return values from this field; if empty,
      * return values from the identity field (the default).
      * 
-     * @return array The return values from the data elements, regardless
-     * of whether they were loaded or not.
+     * @return GenericCollection
      * 
      */
-    public function load($data, $return_field = null)
+    public function loadCollection($data)
     {
         // what indexes do we need to track?
         $index_fields = array_keys($this->index_fields);
 
-        // return a list of field values in $data
-        $return_values = [];
-
-        // what should the return field be?
-        if (! $return_field) {
-            $return_field = $this->getIdentityField();
-        }
+        // retain identity values for creating a collection
+        $identity_values = [];
+        $identity_field  = $this->getIdentityField();
         
         // load each data element as a record
-        foreach ($data as $record) {
-
-            // cast the element to an object for consistent addressing
-            $record = (object) $record;
-
-            // retain the return value on the record
-            $return_value    = $record->$return_field;
-            $return_values[] = $return_value;
-
-            // load it
-            $this->loadEntity($record, $index_fields);
+        foreach ($data as $initial_data) {
+            $initial_data = (object) $initial_data;
+            $identity_values[] = $initial_data->$identity_field;
+            $this->load($initial_data, $index_fields);
         }
 
-        // return the list of field values in $data, and done
-        return $return_values;
+        // done, return a collection
+        return $this->getCollection($identity_values);
     }
 
-    protected function loadEntity($initial_data, $index_fields)
+    public function loadRecord($initial_data)
+    {
+        $initial_data = (object) $initial_data;
+        $index_fields = array_keys($this->index_fields);
+        return $this->load($initial_data, $index_fields);
+    }
+    
+    protected function load($initial_data, $index_fields)
     {
         // get the identity value
         $identity_field  = $this->getIdentityField();

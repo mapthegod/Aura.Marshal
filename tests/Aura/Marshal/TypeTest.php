@@ -124,6 +124,16 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expect, $actual);
     }
     
+    public function testLoadRecord()
+    {
+        $record = $this->type->loadRecord(['id' => 999, 'author_id' => 1, 'foo' => 'bar', 'baz' => 'dib']);
+        
+        $this->assertSame(999, $record->id);
+        $this->assertSame(1, $record->author_id);
+        $this->assertSame('bar', $record->foo);
+        $this->assertSame('dib', $record->baz);
+    }
+    
     public function testGetRecord()
     {
         $data = $this->loadTypeWithPosts();

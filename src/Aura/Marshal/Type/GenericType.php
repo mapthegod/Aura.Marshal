@@ -290,9 +290,6 @@ class GenericType extends Data
      * 
      * @param array $data Record data to load into the IdentityMap.
      * 
-     * @param string $return_field Return values from this field; if empty,
-     * return values from the identity field (the default).
-     * 
      * @return GenericCollection
      * 
      */

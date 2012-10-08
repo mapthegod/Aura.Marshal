@@ -116,46 +116,6 @@ class GenericRecord extends Data
 
     /**
      * 
-     * ArrayAccess: Gets a field value by name; if the field is based on a 
-     * relation to a foreign type, this will get the related record or 
-     * collection.
-     * 
-     * @param string $field The requested field name.
-     * 
-     * @return mixed The field value.
-     * 
-     */
-    public function offsetGet($field)
-    {
-        // if the offset does not exist, and it's a related field,
-        // fill it with related data
-        $fill_related = ! $this->offsetExists($field)
-                      && in_array($field, $this->type->getRelationNames());
-
-        if ($fill_related) {
-            $this->offsetSet($field, $this->type->getRelated($this, $field));
-        }
-
-        return parent::offsetGet($field);
-    }
-
-    /**
-     * 
-     * ArrayAccess: Unsets a field in the record; this leaves the array key 
-     * in place and sets it to null.
-     * 
-     * @param string $field The requested field name.
-     * 
-     * @return void
-     * 
-     */
-    public function offsetUnset($field)
-    {
-        $this->data[$field] = null;
-    }
-
-    /**
-     * 
      * Returns the fields that have been changed, and their new values.
      * 
      * If a field has been added, it counts as "changed" regardless of its

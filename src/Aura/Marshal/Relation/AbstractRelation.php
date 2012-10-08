@@ -59,37 +59,31 @@ abstract class AbstractRelation
      */
     protected $foreign_field;
 
-    // FIXME $type of type
     /**
      * 
      * Constructor.
      * 
-     * @param type $type
+     * @param string $native_type The name of the native type.
      * 
-     * @param string $name The name of the record field where the related
-     * data will be placed.
+     * @param string $foreign_type The name of the foreign type.
      * 
      * @param array $info An array of relationship definition information.
      * 
      * @param Manager $manager The type manager.
      * 
      */
-    public function __construct($type, $name, $info, Manager $manager)
+    public function __construct($native_type, $foreign_type, $info, Manager $manager)
     {
-        if (! $info['foreign_type']) {
-            throw new Exception("No 'foreign_type' specified for relation '$name' in type '$type'.");
-        }
-
         if (! $info['native_field']) {
-            throw new Exception("No 'native_field' specified for relation '$name' in type '$type'.");
+            throw new Exception("No 'native_field' specified for relation '$foreign_type' in type '$native_type'.");
         }
 
         if (! $info['foreign_field']) {
-            throw new Exception("No 'foreign_field' specified for relation '$name' in type '$type'.");
+            throw new Exception("No 'foreign_field' specified for relation '$foreign_type' in type '$native_type'.");
         }
 
         $this->manager = $manager;
-        $this->foreign_type  = $this->manager->__get($info['foreign_type']);
+        $this->foreign_type  = $this->manager->__get($foreign_type);
         $this->native_field  = $info['native_field'];
         $this->foreign_field = $info['foreign_field'];
     }

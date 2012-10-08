@@ -18,9 +18,8 @@ return [
             'author_id',
         ],
         'relation_names'                => [
-            'meta'                      => [
+            'metas'                     => [
                 'relationship'          => 'has_one',
-                'foreign_type'          => 'metas',
                 'native_field'          => 'id',
                 'foreign_field'         => 'post_id',
             ],
@@ -29,9 +28,8 @@ return [
                 'native_field'          => 'id',
                 'foreign_field'         => 'post_id'
             ],
-            'author'                    => [
+            'authors'                   => [
                 'relationship'          => 'belongs_to',
-                'foreign_type'          => 'authors',
                 'native_field'          => 'author_id',
                 'foreign_field'         => 'id',
             ],
@@ -52,9 +50,8 @@ return [
             'post_id',
         ],
         'relation_names'                => [
-            'post'                      => [
+            'posts'                     => [
                 'relationship'          => 'belongs_to',
-                'foreign_type'          => 'posts',
                 'native_field'          => 'post_id',
                 'foreign_field'         => 'id',
             ],
@@ -67,9 +64,8 @@ return [
             'post_id',
         ],
         'relation_names'                => [
-            'post'                      => [
+            'posts'                     => [
                 'relationship'          => 'belongs_to',
-                'foreign_type'          => 'posts',
                 'native_field'          => 'post_id',
                 'foreign_field'         => 'id',
             ],
@@ -83,15 +79,13 @@ return [
             'tag_id',
         ],
         'relation_names'                => [
-            'post'                      => [
+            'posts'                     => [
                 'relationship'          => 'belongs_to',
-                'foreign_type'          => 'posts',
                 'native_field'          => 'post_id',
                 'foreign_field'         => 'id',
             ],
-            'tag'                       => [
+            'tags'                      => [
                 'relationship'          => 'belongs_to',
-                'foreign_type'          => 'tags',
                 'native_field'          => 'tag_id',
                 'foreign_field'         => 'id',
             ],

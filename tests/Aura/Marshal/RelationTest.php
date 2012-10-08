@@ -55,20 +55,6 @@ class RelationTest extends \PHPUnit_Framework_TestCase
         $this->manager->posts;
     }
     
-    public function testNoForeignType()
-    {
-        parent::setUp();
-        $type_builder     = new TypeBuilder;
-        $relation_builder = new RelationBuilder;
-        $types            = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
-        
-        $types['posts']['relation_names']['tags']['foreign_type'] = null;
-        
-        $this->manager = new Manager($type_builder, $relation_builder, $types);
-        $this->setExpectedException('Aura\Marshal\Exception');
-        $this->manager->posts;
-    }
-    
     public function testNoNativeField()
     {
         parent::setUp();
@@ -142,22 +128,26 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     public function testBelongsTo()
     {
         $post = $this->manager->posts->getRecord(1);
-        $this->assertSame('1', $post->author->id);
-        $this->assertSame('Anna', $post->author->name);
+        $author = $this->manager->posts->getRelated($post, 'authors');
+        $this->assertSame('1', $author->id);
+        $this->assertSame('Anna', $author->name);
     }
     
     public function testHasOne()
     {
         $post = $this->manager->posts->getRecord(1);
-        $this->assertSame('1', $post->meta->id);
-        $this->assertSame('1', $post->meta->post_id);
-        $this->assertSame('meta 1', $post->meta->data);
+        $meta = $this->manager->posts->getRelated($post, 'metas');
+        $this->assertSame('1', $meta->id);
+        $this->assertSame('1', $meta->post_id);
+        $this->assertSame('meta 1', $meta->data);
     }
     
     public function testHasMany()
     {
         $post = $this->manager->posts->getRecord(5);
-        $this->assertSame(3, count($post->comments));
+        $comments = $this->manager->posts->getRelated($post, 'comments');
+        
+        $this->assertSame(3, count($comments));
         
         $data  = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
         $expect = [
@@ -166,7 +156,7 @@ class RelationTest extends \PHPUnit_Framework_TestCase
             $data['comments'][5],
         ];
         
-        foreach ($post->comments as $offset => $comment) {
+        foreach ($comments as $offset => $comment) {
             $this->assertSame($expect[$offset]['id'], $comment->id);
             $this->assertSame($expect[$offset]['post_id'], $comment->post_id);
             $this->assertSame($expect[$offset]['body'], $comment->body);
@@ -176,7 +166,9 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     public function testHasManyThrough()
     {
         $post = $this->manager->posts->getRecord(3);
-        $this->assertSame(2, count($post->tags));
+        $tags = $this->manager->posts->getRelated($post, 'tags');
+        
+        $this->assertSame(2, count($tags));
         
         $data  = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_data.php';
         $expect = [
@@ -184,7 +176,7 @@ class RelationTest extends \PHPUnit_Framework_TestCase
             $data['tags'][0],
         ];
         
-        foreach ($post->tags as $offset => $tag) {
+        foreach ($tags as $offset => $tag) {
             $this->assertSame($expect[$offset]['id'], $tag->id);
             $this->assertSame($expect[$offset]['name'], $tag->name);
         }

@@ -284,13 +284,13 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $types = include __DIR__ . DIRECTORY_SEPARATOR . 'fixture_types.php';
         $manager = new Manager($type_builder, $relation_builder, $types);
         
-        $name = 'meta';
+        $name = 'metas';
         $info = $types['posts']['relation_names'][$name];
         
         $relation = $relation_builder->newInstance('posts', $name, $info, $manager);
         $this->type->setRelation($name, $relation);
         
-        $actual = $this->type->getRelation('meta');
+        $actual = $this->type->getRelation('metas');
         $this->assertSame($relation, $actual);
         
         // try again again, should fail

@@ -36,14 +36,13 @@ class Builder
         'has_many_through' => 'Aura\Marshal\Relation\HasManyThrough',
     ];
 
-    // FIXME $type of type
     /**
      * 
      * Builds and returns a relation object.
      * 
-     * @param type $type
+     * @param type $native_type
      * 
-     * @param string $name The name of the record field where the related
+     * @param string $foreign_type The name of the record field where the related
      * data will be placed.
      * 
      * @param array $info An array of relationship definition information.
@@ -53,10 +52,9 @@ class Builder
      * @return AbstractRelation
      * 
      */
-    public function newInstance($type, $name, $info, Manager $manager)
+    public function newInstance($native_type, $foreign_type, $info, Manager $manager)
     {
         $base = [
-            'foreign_type'          => $name,
             'relationship'          => null,
             'native_field'          => null,
             'foreign_field'         => null,
@@ -71,11 +69,11 @@ class Builder
         unset($info['relationship']);
 
         if (! $relationship) {
-            throw new Exception("No 'relationship' specified for relation '$name' in type '$type'.");
+            throw new Exception("No 'relationship' specified for relation to '$foreign_type' in type '$native_type'.");
         }
 
         $class = $this->relationship_class[$relationship];
-        $relation = new $class($type, $name, $info, $manager);
+        $relation = new $class($native_type, $foreign_type, $info, $manager);
 
         return $relation;
     }

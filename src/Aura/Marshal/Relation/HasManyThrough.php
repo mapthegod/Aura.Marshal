@@ -54,34 +54,32 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
      */
     protected $through_foreign_field;
 
-    // FIXME $type of type
     /**
      * 
      * Constructor.
      * 
-     * @param type $type
+     * @param string $native_type The name of the native type.
      * 
-     * @param string $name The name of the record field where the related
-     * data will be placed.
+     * @param string $foreign_type The name of the foreign type.
      * 
      * @param array $info An array of relationship definition information.
      * 
      * @param Manager $manager The type manager.
      */
-    public function __construct($type, $name, $info, Manager $manager)
+    public function __construct($native_type, $foreign_type, $info, Manager $manager)
     {
-        parent::__construct($type, $name, $info, $manager);
+        parent::__construct($native_type, $foreign_type, $info, $manager);
 
         if (! $info['through_type']) {
-            throw new Exception("No 'through_type' specified for relation '$name' in type '$type'.");
+            throw new Exception("No 'through_type' specified for relation '$foreign_type' in type '$native_type'.");
         }
 
         if (! $info['through_native_field']) {
-            throw new Exception("No 'through_native_field' specified for relation '$name' in type '$type'.");
+            throw new Exception("No 'through_native_field' specified for relation '$foreign_type' in type '$native_type'.");
         }
 
         if (! $info['through_foreign_field']) {
-            throw new Exception("No 'through_foreign_field' specified for relation '$name' in type '$type'.");
+            throw new Exception("No 'through_foreign_field' specified for relation '$foreign_type' in type '$native_type'.");
         }
 
         $this->through_type          = $this->manager->{$info['through_type']};

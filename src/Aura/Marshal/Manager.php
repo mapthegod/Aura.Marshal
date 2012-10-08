@@ -179,33 +179,33 @@ class Manager
      * 
      * Sets a one relation for a type in the manager.
      * 
-     * @param string $type The type to set the relation on.
+     * @param string $native_type The type to set the relation from.
      * 
-     * @param string $name The name for the relation.
+     * @param string $foreign_type The type to set the relation to.
      * 
      * @param array $info The relation information.
      * 
      * @return void
      * 
      */
-    public function setRelation($type, $name, $info)
+    public function setRelation($native_type, $foreign_type, $info)
     {
-        if (! isset($this->types[$type])) {
-            throw new Exception("Type '$type' is not in the manager.");
+        if (! isset($this->types[$native_type])) {
+            throw new Exception("Type '$native_type' is not in the manager.");
         }
 
-        if ($this->types[$type] instanceof GenericType) {
+        if ($this->types[$native_type] instanceof GenericType) {
             // set on a type instance
             $relation = $this->relation_builder->newInstance(
-                $type,
-                $name,
+                $native_type,
+                $foreign_type,
                 $info,
                 $this
             );
-            $this->types[$type]->setRelation($name, $relation);
+            $this->types[$native_type]->setRelation($foreign_type, $relation);
         } else {
             // set the relation name on a type definition
-            $this->types[$type]['relation_names'][$name] = $info;
+            $this->types[$native_type]['relation_names'][$foreign_type] = $info;
         }
     }
 

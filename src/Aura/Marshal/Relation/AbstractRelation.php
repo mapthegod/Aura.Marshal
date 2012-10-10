@@ -43,7 +43,7 @@ abstract class AbstractRelation
 
     /**
      * 
-     * The field in the native record to match against.
+     * The field in the native entity to match against.
      * 
      * @var string
      * 
@@ -52,7 +52,7 @@ abstract class AbstractRelation
 
     /**
      * 
-     * The field in the foreign record to match against.
+     * The field in the foreign entity to match against.
      * 
      * @var string
      * 

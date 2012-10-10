@@ -32,8 +32,8 @@ class Builder implements BuilderInterface
      * @return GenericCollection
      * 
      */
-    public function newInstance(GenericType $type, array $data)
+    public function newInstance(array $data)
     {
-        return new GenericCollection($data, $type);
+        return new GenericCollection($data);
     }
 }

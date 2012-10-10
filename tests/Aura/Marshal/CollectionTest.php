@@ -2,7 +2,7 @@
 namespace Aura\Marshal;
 use Aura\Marshal\Collection\GenericCollection;
 use Aura\Marshal\Type\GenericType;
-use Aura\Marshal\Record\ConstructorBuilder as RecordBuilder;
+use Aura\Marshal\Entity\Builder as EntityBuilder;
 use Aura\Marshal\Collection\Builder as CollectionBuilder;
 
 /**
@@ -11,8 +11,6 @@ use Aura\Marshal\Collection\Builder as CollectionBuilder;
  */
 class CollectionTest extends \PHPUnit_Framework_TestCase
 {
-    protected $type;
-    
     protected $collection;
     
     protected $empty_collection;
@@ -23,10 +21,6 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->type = new GenericType;
-        $this->type->setIdentityField('id');
-        $this->type->setRecordBuilder(new RecordBuilder);
-        
         $ids = [1, 2, 3, 5, 7, 11, 13];
         $names = ['foo', 'bar', 'baz', 'dib', 'zim', 'gir', 'irk'];
         $data = [];
@@ -37,8 +31,8 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
             ];
         }
         
-        $this->collection = new GenericCollection($data, $this->type);
-        $this->empty_collection = new GenericCollection([], $this->type);
+        $this->collection = new GenericCollection($data);
+        $this->empty_collection = new GenericCollection([]);
     }
     
     /**
@@ -48,13 +42,6 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         parent::tearDown();
-    }
-
-    public function testGetIdentityValues()
-    {
-        $expect = [1, 2, 3, 5, 7, 11, 13];
-        $actual = $this->collection->getIdentityValues();
-        $this->assertSame($expect, $actual);
     }
 
     public function testIsEmpty()
@@ -67,8 +54,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $type = new GenericType;
         $type->setIdentityField('id');
-        $type->setRecordClass('Aura\Marshal\Record\GenericRecord');
-        $type->setRecordBuilder(new RecordBuilder);
+        $type->setEntityBuilder(new EntityBuilder);
         $type->setCollectionBuilder(new CollectionBuilder);
         
         $ids = [1, 2, 3, 5, 7, 11, 13];
@@ -84,34 +70,18 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $type->loadCollection($data);
         
         // get a collection of all the IDs from the type *before* creating
-        // any record objects.
+        // any entity objects.
         $collection = $type->getCollection($ids);
         
-        // get a record by ID from the type and change it.
-        // note that getRecord() is by identity value, not offset.
-        $expect = $type->getRecord(1);
+        // get a entity by ID from the type and change it.
+        // note that getEntity() is by identity value, not offset.
+        $expect = $type->getEntity(1);
         $expect->name = 'changed';
         
-        // now get what should be the same record from the collection.
+        // now get what should be the same entity from the collection.
         // it should be changed as well.
         // note that collection is by offset, not identity value.
         $actual = $collection[0];
         $this->assertSame($expect->name, $actual->name);
-    }
-    
-    public function testAppendNewRecord()
-    {
-        $before = count($this->collection);
-        
-        $record = $this->collection->appendNewRecord();
-        $this->assertInstanceOf('Aura\Marshal\Record\GenericRecord', $record);
-        
-        $expect = $before + 1;
-        $actual = count($this->collection);
-        $this->assertSame($expect, $actual);
-        
-        $expect = [$record];
-        $actual = $this->type->getNewRecords();
-        $this->assertSame($expect, $actual);
     }
 }

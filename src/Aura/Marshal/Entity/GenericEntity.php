@@ -8,19 +8,19 @@
  * @license http://opensource.org/licenses/bsd-license.php BSD
  * 
  */
-namespace Aura\Marshal\Record;
+namespace Aura\Marshal\Entity;
 
 use Aura\Marshal\Data;
 use Aura\Marshal\Type\GenericType;
 
 /**
  * 
- * Represents a single record.
+ * Represents a single entity.
  * 
  * @package Aura.Marshal
  * 
  */
-class GenericRecord extends Data
+class GenericEntity extends Data
 {
     /**
      * 
@@ -54,7 +54,7 @@ class GenericRecord extends Data
 
     /**
      * 
-     * Does a certain field exist in the record?
+     * Does a certain field exist in the entity?
      * 
      * @param string $field The requested field name.
      * 
@@ -68,7 +68,7 @@ class GenericRecord extends Data
 
     /**
      * 
-     * Unsets a field in the record.
+     * Unsets a field in the entity.
      * 
      * @param string $field The requested field name.
      * 

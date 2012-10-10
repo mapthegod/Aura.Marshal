@@ -1,8 +1,8 @@
 Overall
 -------
 
-- Create RecordTrait and CollectionTrait, and make the Record and Collection
-  classes use them. Then users don't have to extend the Record and Collection;
+- Create EntityTrait and CollectionTrait, and make the Entity and Collection
+  classes use them. Then users don't have to extend the Entity and Collection;
   they can apply the trait to their own domain objects.
 
 GenericType
@@ -10,15 +10,15 @@ GenericType
 
 - Add methods ...
 
-    - deleteRecord() capability; note that this only marks it for deletion,
+    - deleteEntity() capability; note that this only marks it for deletion,
       and does not actually do anyting in a data store. Should this also
       cascade through subordinate relationships?
     
-    - removeRecord() to remove from the IdentityMap without marking for
+    - removeEntity() to remove from the IdentityMap without marking for
       deletion.
     
-    - getDeletedRecords() to get a collection of records that were deleted
-      using deleteRecord()
+    - getDeletedEntities() to get a collection of entities that were deleted
+      using deleteEntity()
 
 
 GenericCollection
@@ -26,20 +26,20 @@ GenericCollection
 
 - Add methods ...
 
-    - deleteRecord() to remove from the collection and mark for deletion.
+    - deleteEntity() to remove from the collection and mark for deletion.
       Should this cascade through subordinate relationships?
 
-    - removeRecord() to remove from the collection without marking for
+    - removeEntity() to remove from the collection without marking for
       deletion (and without removing from the IdentityMap).
 
 
-GenericRecord
+GenericEntity
 -------------
 
 - Add methods ...
 
-    - getIdentityValue() to return the identity value for the record
+    - getIdentityValue() to return the identity value for the entity
     
-    - getIdentityField() to return the identity field for the record
+    - getIdentityField() to return the identity field for the entity
     
     

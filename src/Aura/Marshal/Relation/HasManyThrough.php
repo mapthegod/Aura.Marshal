@@ -16,7 +16,7 @@ use Aura\Marshal\Type\GenericType;
 
 /**
  * 
- * Represents a relationship where a native record has many foreign records
+ * Represents a relationship where a native entity has many foreign entities
  * (i.e., a foreign collection) mapped through an association type.
  * 
  * @package Aura.Marshal
@@ -26,7 +26,7 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
 {
     /**
      * 
-     * Native and foreign records are mapped to each other through this
+     * Native and foreign entities are mapped to each other through this
      * association type.
      * 
      * @var GenericType
@@ -89,18 +89,18 @@ class HasManyThrough extends AbstractRelation implements RelationInterface
 
     /**
      * 
-     * Returns the related foreign collection for a native record.
+     * Returns the related foreign collection for a native entity.
      * 
-     * @param mixed $record The native record.
+     * @param mixed $entity The native entity.
      * 
      * @return GenericCollection
      * 
      */
-    public function getForRecord($record)
+    public function getForEntity($entity)
     {
         // first, find the native values in the through type
         $native_field = $this->native_field;
-        $native_value = $record->$native_field;
+        $native_value = $entity->$native_field;
         $through_coll = $this->through_type->getCollectionByField(
             $this->through_native_field,
             $native_value

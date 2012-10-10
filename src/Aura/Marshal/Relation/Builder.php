@@ -42,7 +42,7 @@ class Builder
      * 
      * @param type $native_type
      * 
-     * @param string $foreign_type The name of the record field where the related
+     * @param string $foreign_type The name of the entity field where the related
      * data will be placed.
      * 
      * @param array $info An array of relationship definition information.

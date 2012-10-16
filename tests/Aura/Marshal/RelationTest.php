@@ -128,7 +128,8 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     public function testBelongsTo()
     {
         $post = $this->manager->posts->getEntity(1);
-        $author = $this->manager->posts->getRelated($post, 'authors');
+        $relation = $this->manager->posts->getRelation('author');
+        $author = $relation->getForEntity($post);
         $this->assertSame('1', $author->id);
         $this->assertSame('Anna', $author->name);
     }
@@ -136,7 +137,8 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     public function testHasOne()
     {
         $post = $this->manager->posts->getEntity(1);
-        $meta = $this->manager->posts->getRelated($post, 'metas');
+        $relation = $this->manager->posts->getRelation('meta');
+        $meta = $relation->getForEntity($post);
         $this->assertSame('1', $meta->id);
         $this->assertSame('1', $meta->post_id);
         $this->assertSame('meta 1', $meta->data);
@@ -145,7 +147,8 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     public function testHasMany()
     {
         $post = $this->manager->posts->getEntity(5);
-        $comments = $this->manager->posts->getRelated($post, 'comments');
+        $relation = $this->manager->posts->getRelation('comments');
+        $comments = $relation->getForEntity($post);
         
         $this->assertSame(3, count($comments));
         
@@ -166,7 +169,8 @@ class RelationTest extends \PHPUnit_Framework_TestCase
     public function testHasManyThrough()
     {
         $post = $this->manager->posts->getEntity(3);
-        $tags = $this->manager->posts->getRelated($post, 'tags');
+        $relation = $this->manager->posts->getRelation('tags');
+        $tags = $relation->getForEntity($post, 'tags');
         
         $this->assertSame(2, count($tags));
         

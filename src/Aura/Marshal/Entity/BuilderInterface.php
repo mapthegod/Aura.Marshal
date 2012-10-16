@@ -25,7 +25,9 @@ interface BuilderInterface
      * 
      * Creates a new entity object.
      * 
-     * @param mixed $data Data to load into the entity.
+     * @param GenericType $type The type for this entity.
+     * 
+     * @param mixed $initial_data Data to load into the entity.
      * 
      */
     public function newInstance($initial_data);

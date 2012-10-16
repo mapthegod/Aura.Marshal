@@ -657,12 +657,6 @@ class GenericType extends Data
         return $list;
     }
     
-    public function getRelated($entity, $relation_name)
-    {
-        $relation = $this->getRelation($relation_name);
-        return $relation->getForEntity($entity);
-    }
-    
     public function getInitialData($entity)
     {
         if ($this->initial_data->contains($entity)) {
@@ -676,11 +670,16 @@ class GenericType extends Data
     {
         // the eventual list of changed fields and values
         $changed = [];
-
+        $related = $this->getRelationNames();
+        
         // initial data for this entity
         $initial_data = $this->getInitialData($entity);
         if (! $initial_data) {
             foreach ($entity as $field => $value) {
+                // skip relateds
+                if (in_array($field, $related)) {
+                    continue;
+                }
                 $changed[$field] = $value;
             }
             return $changed;
@@ -689,6 +688,11 @@ class GenericType extends Data
         // go through all the data elements and their presumed new values
         foreach ($entity as $field => $new) {
 
+            // skip relateds
+            if (in_array($field, $related)) {
+                continue;
+            }
+            
             // if the field is not part of the initial data ...
             if (! array_key_exists($field, $initial_data)) {
                 // ... then it's a change from the initial data.

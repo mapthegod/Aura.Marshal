@@ -87,4 +87,6 @@ abstract class AbstractRelation
         $this->native_field  = $info['native_field'];
         $this->foreign_field = $info['foreign_field'];
     }
+    
+    abstract public function getForEntity($entity);
 }

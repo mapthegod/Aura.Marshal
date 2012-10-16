@@ -42,7 +42,7 @@ class Builder
      * 
      * @param type $native_type
      * 
-     * @param string $foreign_type The name of the entity field where the related
+     * @param string $related_name The name of the entity field where the related
      * data will be placed.
      * 
      * @param array $info An array of relationship definition information.
@@ -52,10 +52,11 @@ class Builder
      * @return AbstractRelation
      * 
      */
-    public function newInstance($native_type, $foreign_type, $info, Manager $manager)
+    public function newInstance($native_type, $related_name, $info, Manager $manager)
     {
         $base = [
             'relationship'          => null,
+            'foreign_type'          => null,
             'native_field'          => null,
             'foreign_field'         => null,
             'through_type'          => null,
@@ -67,11 +68,16 @@ class Builder
 
         $relationship = $info['relationship'];
         unset($info['relationship']);
-
         if (! $relationship) {
-            throw new Exception("No 'relationship' specified for relation to '$foreign_type' in type '$native_type'.");
+            throw new Exception("No 'relationship' specified for relation to '$related_name' in type '$native_type'.");
         }
 
+        if ($info['foreign_type']) {
+            $foreign_type = $info['foreign_type'];
+        } else {
+            $foreign_type = $related_name;
+        }
+        
         $class = $this->relationship_class[$relationship];
         $relation = new $class($native_type, $foreign_type, $info, $manager);
 
